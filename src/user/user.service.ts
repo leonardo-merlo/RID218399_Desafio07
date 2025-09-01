@@ -53,6 +53,9 @@ export class UserService {
     await this.userRepository.update(id, data);
 
     const updated = await this.userRepository.findOne({ where: { id } });
+    if (!updated) {
+      throw new Error('Usuário não encontrado');
+    }
     const { password, ...result } = updated;
     return result;
   }
@@ -62,5 +65,9 @@ export class UserService {
     if (result.affected === 0) {
       throw new NotFoundException('User not found');
     }
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 }
